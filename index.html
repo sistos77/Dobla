@@ -217,7 +217,7 @@
        <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="importCSV(event)">
    </div>
 
-   <!-- Modulo per Aggiungere un Prodotto (con campi ingranditi) -->
+   <!-- Modulo per Aggiungere un Prodotto -->
    <div class="form-card" id="addForm">
        <h3 style="margin-bottom: 14px; font-size: 1.15rem; color: var(--primary);">Inserisci Nuovo Prodotto</h3>
        <form onsubmit="salvaProdotto(event)">
@@ -511,9 +511,15 @@ WOODEN CRUMBLE,77759,6,3
 WORLD,77406,1,4
 ZEBRA (192 PZ),71855,,`;
 
-       let prodotti = JSON.parse(localStorage.getItem('prodotti_db'));
+       let prodotti = [];
+       try {
+           prodotti = JSON.parse(localStorage.getItem('prodotti_db'));
+       } catch (e) {
+           prodotti = [];
+       }
 
-       if (!prodotti || prodotti.length === 0) {
+       // Se la memoria è vuota o ha meno di 10 elementi, ricarica in automatico il CSV da 254 prodotti
+       if (!Array.isArray(prodotti) || prodotti.length < 10) {
            prodotti = parseCSVText(CSV_INIZIALE);
            salvaStorage();
        }
@@ -539,10 +545,10 @@ ZEBRA (192 PZ),71855,,`;
                    return;
                }
 
-               if (cols.length >= 4) {
+               if (cols.length >= 1 && cols[0]) {
                    parsed.push({
                        id: Date.now() + index,
-                       nome: cols[0] ? cols[0].toUpperCase() : 'SENZA NOME',
+                       nome: cols[0].toUpperCase(),
                        codice: cols[1] || '',
                        scaffale: cols[2] || '',
                        ripiano: cols[3] || '',
@@ -564,7 +570,8 @@ ZEBRA (192 PZ),71855,,`;
        }
 
        function salvaModificaPosizione(id) {
-           const nuovoScaffale = document.getElementById(`edit-scaffale-${id}`).value.trim(); const nuovoRipiano = document.getElementById(`edit-ripiano-${id}`).value.trim();
+           const nuovoScaffale = document.getElementById(`edit-scaffale-${id}`).value.trim();
+           const nuovoRipiano = document.getElementById(`edit-ripiano-${id}`).value.trim();
 
            if (!nuovoScaffale || !nuovoRipiano) {
                alert('Compila sia lo scaffale che il ripiano.');
@@ -608,4 +615,134 @@ ZEBRA (192 PZ),71855,,`;
 
            let csvContent = "data:text/csv;charset=utf-8,Nome Prodotto;Codice Produttore;Scaffale;Ripiano\n";
            prodotti.forEach(p => {
-               const nomeEscaped = `"${p.nome.replace(/"/g, '""')}"`; const codiceEscaped = `"${(p.codice || '').replace
+               const nomeEscaped = `"${p.nome.replace(/"/g, '""')}"`;
+               const codiceEscaped = `"${(p.codice || '').replace(/"/g, '""')}"`;
+               const scaffaleEscaped = `"${(p.scaffale || '').replace(/"/g, '""')}"`;
+               const ripianoEscaped = `"${(p.ripiano || '').replace(/"/g, '""')}"`;
+               csvContent += `${nomeEscaped};${codiceEscaped};${scaffaleEscaped};${ripianoEscaped}\n`;
+           });
+
+           const encodedUri = encodeURI(csvContent);
+           const link = document.createElement("a");
+           link.setAttribute("href", encodedUri);
+           link.setAttribute("download", `backup_prodotti_${new Date().toISOString().slice(0,10)}.csv`);
+           document.body.appendChild(link);
+           link.click();
+           document.body.removeChild(link);
+       }
+
+       function eliminaProdotto(id, nomeProdotto) {
+           const primaConferma = confirm(`Sei sicuro di voler eliminare il prodotto:\n"${nomeProdotto}"?`);
+           if (!primaConferma) return;
+
+           const secondaConferma = confirm(`⚠️ ATTENZIONE: Questa operazione è irreversibile.\nVuoi davvero procedere?`);
+           if (!secondaConferma) return;
+
+           prodotti = prodotti.filter(p => p.id !== id);
+           salvaStorage();
+           renderProducts(searchInput.value);
+       }
+
+       function eliminaTuttiInMassa() {
+           if (prodotti.length === 0) {
+               alert("Il database è già vuoto!");
+               return;
+           }
+
+           const c1 = confirm(`⚠️ PRIMA CONFERMA:\nSei sicuro di voler CANCELLARE TUTTI i ${prodotti.length} prodotti?`);
+           if (!c1) return;
+
+           const c2 = confirm(`⚠️ SECONDA CONFERMA:\nStiamo per scaricare un BACKUP AUTOMATICO in CSV per sicurezza prima di eliminare.\nVuoi continuare?`);
+           if (!c2) return;
+
+           const testo = prompt(`⚠️ TERZA E ULTIMA CONFERMA:\nPer confermare la cancellazione totale, scrivi la parola ELIMINA in maiuscolo:`);
+           if (testo === "ELIMINA") {
+               esportaCSV();
+               prodotti = [];
+               salvaStorage();
+               renderProducts();
+               alert("🗑️ Backup scaricato e prodotti eliminati con successo.");
+           } else {
+               alert("Operazione annullata: la parola di conferma non è corretta.");
+           }
+       }
+
+       function importCSV(e) {
+           const file = e.target.files[0];
+           if (!file) return;
+
+           const reader = new FileReader();
+           reader.onload = function(evt) {
+               const nuoviProdotti = parseCSVText(evt.target.result);
+               prodotti = prodotti.concat(nuoviProdotti);
+               salvaStorage();
+               renderProducts(searchInput.value);
+               alert(`Importati con successo ${nuoviProdotti.length} prodotti!`);
+           };
+           reader.readAsText(file);
+       }
+
+       function cancellaRicerca() {
+           searchInput.value = '';
+           clearBtn.style.display = 'none';
+           searchInput.focus();
+           renderProducts('');
+       }
+
+       function renderProducts(filter = '') {
+           const query = filter.toLowerCase().trim();
+           
+           clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+
+           let filtered = prodotti.filter(p =>
+               p.nome.toLowerCase().includes(query) ||
+               p.codice.toLowerCase().includes(query) ||
+               p.scaffale.toLowerCase().includes(query) ||
+               p.ripiano.toLowerCase().includes(query)
+           );
+
+           filtered.sort((a, b) => a.nome.localeCompare(b.nome, 'it', { numeric: true, sensitivity: 'base' }));
+
+           countText.innerText = `Trovati ${filtered.length} di ${prodotti.length} prodotti`;
+
+           if (filtered.length === 0) {
+               productList.innerHTML = `<div class="no-results">Nessun prodotto trovato</div>`;
+               return;
+           }
+
+           productList.innerHTML = filtered.map(p => `
+               <div class="product-card">
+                   <div class="product-header">
+                       <div class="product-info">
+                           <h3>${p.nome}</h3>
+                           <p>Codice Produttore: <strong>${p.codice || '-'}</strong></p>
+                       </div>
+                       <div class="card-right">
+                           <div class="location-badge">
+                               <span>Posizione</span>
+                               ${p.scaffale || '-'} - ${p.ripiano || '-'}
+                           </div>
+                           <button class="btn-icon" onclick="toggleEditPanel(${p.id})" title="Modifica Posizione">✏️</button>
+                           <button class="btn-icon delete" onclick="eliminaProdotto(${p.id}, '${p.nome.replace(/'/g, "\\'")}')" title="Elimina singolo prodotto">🗑️</button>
+                       </div>
+                   </div>
+                   <div class="edit-panel" id="edit-panel-${p.id}">
+                       <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 6px;">Modifica Posizione:</div>
+                       <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                           <input type="text" id="edit-scaffale-${p.id}" value="${p.scaffale}" placeholder="Nuovo Scaffale">
+                           <input type="text" id="edit-ripiano-${p.id}" value="${p.ripiano}" placeholder="Nuovo Ripiano">
+                       </div>
+                       <div style="display: flex; gap: 6px;">
+                           <button class="btn btn-success" style="padding: 6px 10px; font-size: 0.8rem;" onclick="salvaModificaPosizione(${p.id})">Conferma Modifica</button>
+                           <button class="btn btn-outline" style="padding: 6px 10px; font-size: 0.8rem;" onclick="toggleEditPanel(${p.id})">Annulla</button>
+                       </div>
+                   </div>
+               </div>
+           `).join('');
+       }
+
+       searchInput.addEventListener('input', (e) => renderProducts(e.target.value));
+       renderProducts();
+   </script>
+</body>
+</html>
