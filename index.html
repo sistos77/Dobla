@@ -244,11 +244,12 @@
    <div id="productList"></div>
 
    <script>
+       // CHIAVE AGGIORNATA PER PULIRE LA MEMORIA CACHE DI SAFARI/IOS
+       const STORAGE_KEY = 'trovaproduzioni_v2';
        let prodotti = [];
 
-       // Caricamento dalla memoria locale del dispositivo
        try {
-           const saved = localStorage.getItem('prodotti_db');
+           const saved = localStorage.getItem(STORAGE_KEY);
            if (saved) {
                prodotti = JSON.parse(saved);
            }
@@ -262,7 +263,7 @@
        const countText = document.getElementById('countText');
 
        function salvaStorage() {
-           localStorage.setItem('prodotti_db', JSON.stringify(prodotti));
+           localStorage.setItem(STORAGE_KEY, JSON.stringify(prodotti));
        }
 
        function parseCSVText(text) {
@@ -403,7 +404,6 @@
            }
        }
 
-       // IMPORTAZIONE INTELLIGENTE (SMART MERGE)
        function importCSV(e) {
            const file = e.target.files[0];
            if (!file) return;
@@ -463,7 +463,7 @@
            countText.innerText = `Trovati ${filtered.length} di ${prodotti.length} prodotti`;
 
            if (filtered.length === 0) {
-               productList.innerHTML = `<div class="no-results">Nessun prodotto trovato. Clicca su "📥 Importa CSV" per caricare il tuo listino!</div>`;
+               productList.innerHTML = `<div class="no-results">Nessun prodotto trovato. Clicca su "📥 Importa CSV" per caricare il tuo listino pulito!</div>`;
                return;
            }
 
@@ -495,7 +495,7 @@
                        </div>
                        <div style="display: flex; gap: 6px;">
                            <button class="btn btn-success" style="padding: 8px 12px; font-size: 0.85rem;" onclick="salvaModificaProdotto(${p.id})">Conferma Modifiche</button>
-                           <button class="btn btn-outline" style="padding: 8px 12px; font-size: 0.85rem;" onclick="toggleEditPanel(${p.id})">Annulla</button>
+                           <button class="btn btn-outline" style="padding: 8px 12px; font-size: 0.85rem;" onclick="toggleEditPanel(${p.id})">Annulla-</button>
                        </div>
                    </div>
                </div>
