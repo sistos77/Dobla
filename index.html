@@ -238,288 +238,13 @@
    </div>
 
    <div class="results-info">
-       <span id="countText">Caricamento prodotti...</span>
+       <span id="countText">Caricamento prodotti da GitHub...</span>
    </div>
 
    <div id="productList"></div>
 
    <script>
-       const CSV_INIZIALE = `DESCRIZIONE,CODICE,SCAFFALE,RIPIANO
-ACORN BRONZE,77956,4,6
-A LA CARTE CUP DARK,11223,5,5
-ANIMAL ASSORTMENT,77788,2,5
-ASSORTMENT BOX CIGARILLO (108 PZ),71518,3,6
-BALL DARK GOLD,77778,,
-BALL DARK RED,77389,,
-BALLOONS,78429,3,4
-BAT (192 PZ),71812,,
-BLACK CAT,78440,,
-BLING DARK,77767,4,6
-BLIZZARD ASSORTMENT   262 PZ,73196,6,6
-BRONZE CRUMBLE,77764,6,3
-BUNNY,77117,1,3
-BUNNY EARS E FLOWERS,78074,1,2
-BUON NATALE SIGILLO,77625,,
-BUNNY EGGS PASTEL ASS.,78076,1,3
-BUTTERFLY,77568,3,3
-BUTTERFLY WHITE PINK  (120 pz),77572,3,6
-CANDY ASSORTMENT,78250,6,4
-CANDY BALL ASSORTMENT,79075,,
-CARROT,77118,1,3
-CASKET DARK,77787,2,5
-CHAMPAGNE BOTTLE,77366,1,4
-CHAMPAGNE GLASSES,77372,2,4
-CHAMPAGNE GLASSES GOLD,77484,2,4
-CHAMPAGNE GLASSES SILVER,77485,2,4
-CHAMPAGNE & GLASSES,77636,2,3
-CHAMPAGNE & GLASSES BROWN,77637,2,3
-CHRISTMAS TREE ASSORTMENT,77632,,
-CINNAMON STICK,77823,6,3
-CIRCUS TENT,78125,5,4
-CLEO,77765,4,6
-CLOVER,77955,3,3
-CLOVER ASSORTMENT,78301,3,3
-COCONUT CHUNKS,77826,6,3
-COLOR DOTS,78184,3,4
-CONF. AUGURI DOTTORI,77348,,
-CONFETTI SILVER,78393,3,4
-COFFEE CUP,77370,1,4
-COFFEE CUP GOLD,77488,1,4
-COFFEE CUP SILVER,77489,1,4
-COFFEE BEAN,77827,6,3
-COFFEE SAUCER,77371,1,4
-CONO GELATO ICE CREAM,78126,5,4
-CORIANDOLI COLORATI,78430,3,4
-CORNER PIECE,78428,3,4
-CORNETTO PORTAFORTUNA,77353,2,6
-CRACKLE BALL DARK,77789,2,5
-CREPE MYRTLE PINK,77822,6,3
-CROCODILE (192 PZ),71813,,
-CROWN,77595,2,4
-CROWN GOLD,77609,2,4
-CUPCAKE,77566,3,3
-CUPCAKE ASSORTMENT,78132,5,4
-DARK CRUMBLE,77763,6,3
-DARK DUST,77762,6,3
-DARK WOOD,77761,6,3
-DIAMOND DARK,77766,4,6
-DIAMOND MIX (140 PZ),71515,3,6
-DINOSAUR ASSORTMENT,77790,2,5
-DISCO BALL,78183,3,4
-DOCTOR'S HAT,77347,2,6
-DOLPHIN (192 PZ),71814,,
-DONUT,77626,5,4
-DOTS,78185,3,4
-DOUBLE HEART,77634,2,3
-DRAGONFLY,77569,3,3
-DUCK (192 PZ),71815,,
-EASTER CHICK,77119,1,3
-EASTER EGGS (180 PZ),71804,1,3
-ECHO DARK,77954,4,6
-ELEPHANT (192 PZ),71816,,
-EXCLAMATION MARK,78426,3,4
-EYE GLASSES,77367,1,4
-FANTASY ASSORTMENT,77791,2,5
-FARM ANIMALS (192 PZ),71817,,
-FEATHER,77957,4,6
-FESTIVITY ASSORTMENT,77792,2,5
-FINGER FOOD CUP DARK,11219,5,5
-FIRECRACKER,78425,3,4
-FISH (192 PZ),71818,,
-FLAMINGO,77958,4,6
-FLEUR,77959,4,6
-FLOWER,77570,3,3
-FLOWER ASSORTMENT,78302,3,3
-FOOTBALL SHOE,77349,2,6
-FOOTBALL SHIRT,77350,2,6
-FOOTBALL & BALL,77351,2,6
-FOREST ASSORTMENT,77793,2,5
-FORK & SPOON,77368,1,4
-FORTUNE COOKIE,77635,2,3
-FROG (192 PZ),71819,,
-GIRAFFE (192 PZ),71820,,
-GIRL & BOY,77633,2,3
-GOLDFISH (192 PZ),71821,,
-GOLDEN CRUMBLE,77769,6,3
-GOLDEN DUST,77768,6,3
-GOLDEN WOOD,77770,6,3
-GOLF BALL & TEE,77352,2,6
-GOLF BAG,77369,1,4
-GRAIN CRUMBLE,77760,6,3
-GREEN WOOD,77771,6,3
-GUITAR,77354,2,6
-GUITAR ELECTRIC,77355,2,6
-HAPPY BIRTHDAY,77357,2,6
-HAPPY BIRTHDAY ROUND,77356,2,6
-HAPPY EASTER,77121,1,3
-HAPPY FATHER'S DAY,77358,2,6
-HAPPY MOTHER'S DAY,77359,2,6
-HAPPY NEW YEAR,77360,2,6
-HAPPY RETIREMENT,77361,2,6
-HARLEQUIN ASSORTMENT,77794,2,5
-HAZELNUT CRUMBLE,77772,6,3
-HEART,77122,1,3
-HEART ASSORTMENT,78130,5,4
-HEART GOLD,77608,2,4
-HEART RED,77480,2,4
-HEART SILVER,77481,2,4
-HEART & ARROW,77638,2,3
-HELLO BABY,77362,2,6
-HIGH HEEL,77363,2,6
-HIPPO (192 PZ),71822,,
-HORSE (192 PZ),71823,,
-HORSESHOE,77364,2,6
-ICE CREAM ASSORTMENT,78131,5,4
-JUNGLE ASSORTMENT,77795,2,5
-KEY,77365,2,6
-LADYBUG,77571,3,3
-LADYBUG (192 PZ),71824,,
-LEAF,77824,6,3
-LEAF ASSORTMENT,78303,3,3
-LIPSTICK,77373,1,4
-LITTLE DUCK,77120,1,3
-LITTLE LAMB,77380,1,3
-LIZARD (192 PZ),71825,,
-LOLLIPOP,77627,5,4
-LOVE,77374,1,4
-LOVE ASSORTMENT,78133,5,4
-MARGARITA,77821,6,3
-MARGARITA WHITE,77960,4,6
-MARINE ASSORTMENT,77796,2,5
-MASK,77375,1,4
-MEMBER OF PARLIAMENT,77376,1,4
-MERRY CHRISTMAS,77631,,
-MICKEY MOUSE,77850,2,5
-MINI CLOVER,77961,4,6
-MINI CONO GELATO,78127,5,4
-MINI CROCODILE (192 PZ),71826,,
-MINI DIAMOND,77773,4,6
-MINI ELEPHANT (192 PZ),71827,,
-MINI FANTASY,77962,4,6
-MINI FLEUR,77963,4,6
-MINI FLOWER,77964,4,6
-MINI FROG (192 PZ),71828,,
-MINI HEART,77618,1,3
-MINI HIPPO (192 PZ),71829,,
-MINI LADYBUG,77965,4,6
-MINI LADYBUG (192 PZ),71830,,
-MINI LION (192 PZ),71831,,
-MINI MAPLE LEAF,77966,4,6
-MINI PENGUIN (192 PZ),71832,,
-MINI PIG (192 PZ),71833,,
-MINI STAR,77619,1,3
-MINI STAR (192 PZ),71834,,
-MINI TURTLE (192 PZ),71835,,
-MIRROR BALL,78182,3,4
-MIX COLOURS (126 pz),71517,3,6
-MONEY BAG,77377,1,4
-MONKEY (192 PZ),71836,,
-MOON,77825,6,3
-MOUSE (192 PZ),71837,,
-MR & MRS,77378,1,4
-MUSHROOM,77379,1,4
-MUSIC NOTES,77381,1,4
-MUSIC NOTES (192 PZ),71838,,
-OWL (192 PZ),71839,,
-PALM TREE,77967,4,6
-PANDA (192 PZ),71840,,
-PANSY,77968,4,6
-PAPER BOAT,77382,1,4
-PAPER PLANE,77383,1,4
-PARIS ASSORTMENT,77797,2,5
-PEACE,77384,1,4
-PEARL WHITE,77774,4,6
-PENGUIN (192 PZ),71841,,
-PEPPER,77828,6,3
-PIG (192 PZ),71842,,
-PINK PEARL,77775,4,6
-PIZZA SLICE,77628,5,4
-PLUMERIA,77969,4,6
-POLICE HAT,77385,1,4
-POLKA DOTS,78186,3,4
-PRESENT,77386,1,4
-PRESENT ASSORTMENT,78134,5,4
-PROFESSIONAL HAT,77387,1,4
-PUZZLE PIECE,78427,3,4
-RABBIT (192 PZ),71843,,
-RAINBOW,77970,4,6
-RAVIOLI,77629,5,4
-RED CARPET ASSORTMENT,77798,2,5
-RED PEARL,77776,4,6
-RING,77388,1,4
-ROSE,77567,3,3
-ROSE (192 PZ),71844,,
-ROSE GOLD CRUMBLE,77778,6,3
-ROSE GOLD DUST,77777,6,3
-ROSE GOLD WOOD,77779,6,3
-SAILBOAT,77390,1,4
-SAILBOAT ASSORTMENT,77799,2,5
-SCALLOP,77971,4,6
-SCULL,77391,1,4
-SEA HORSE (192 PZ),71845,,
-SEASIDE ASSORTMENT,77800,2,5
-SHAMROCK,77972,4,6
-SHARK (192 PZ),71846,,
-SHEEP (192 PZ),71847,,
-SHOE,77392,1,4
-SILVER CRUMBLE,77781,6,3
-SILVER DUST,77780,6,3
-SILVER PEARL,77782,4,6
-SILVER WOOD,77783,6,3
-SMILE,77403,1,4
-SMILE (192 PZ),71848,,
-SNAIL (192 PZ),71849,,
-SNOWFLAKE,77630,5,4
-SOCCER BALL,77346,2,6
-SOCCER SHIRT,77394,1,4
-SPARKLE DARK,77784,4,6
-SPARKLING ASSORTMENT,77801,2,5
-SPIDER (192 PZ),71850,,
-SPOON,77395,1,4
-SPOON CUP DARK,11221,5,5
-SPRING ASSORTMENT,77802,2,5
-SQUARE ASSORTMENT,78304,3,3
-STAR,77123,1,3
-STAR ASSORTMENT,78135,5,4
-STAR GOLD,77607,2,4
-STAR RED,77482,2,4
-STAR SILVER,77483,2,4
-STARFISH,77973,4,6
-SUNFLOWER,77974,4,6
-SUNGLASSES,77396,1,4
-SWAN,77975,4,6
-SWEET HEART,77639,2,3
-TEDDY BEAR,77397,1,4
-TEDDY BEAR (192 PZ),71851,,
-TENNIS RACKET & BALL,77398,1,4
-TICK,77400,1,4
-TIGER (192 PZ),71852,,
-TIE,77399,1,4
-TURTLE (192 PZ),71853,,
-UMBRELLA,77401,1,4
-VALENTINE ASSORTMENT,77803,2,5
-VIOLIN,77402,1,4
-WHALE (192 PZ),71854,,
-WHITE PEARL,77785,4,6
-WHITE WOOD,77786,6,3
-WINE GLASS,77403,1,4
-WINGS,77404,1,4
-WISHBONE,77405,1,4
-WOODEN CRUMBLE,77759,6,3
-WORLD,77406,1,4
-ZEBRA (192 PZ),71855,,`;
-
        let prodotti = [];
-       try {
-           prodotti = JSON.parse(localStorage.getItem('prodotti_db'));
-       } catch (e) {
-           prodotti = [];
-       }
-
-       if (!Array.isArray(prodotti) || prodotti.length < 10) {
-           prodotti = parseCSVText(CSV_INIZIALE);
-           salvaStorage();
-       }
 
        const searchInput = document.getElementById('searchInput');
        const clearBtn = document.getElementById('clearSearch');
@@ -554,6 +279,39 @@ ZEBRA (192 PZ),71855,,`;
                }
            });
            return parsed;
+       }
+
+       // Caricamento iniziale: prova a scaricare il file prodotti.csv da GitHub
+       async function inizializzaApp() {
+           try {
+               const saved = localStorage.getItem('prodotti_db');
+               if (saved) {
+                   prodotti = JSON.parse(saved);
+               }
+               
+               // Scarica sempre la versione aggiornata da GitHub in background
+               const response = await fetch('prodotti.csv');
+               if (response.ok) {
+                   const csvText = await response.text();
+                   const prodottiGitHub = parseCSVText(csvText);
+                   if (prodottiGitHub.length > 0) {
+                       // Se non ci sono modifiche locali salvate o se vogliamo sincronizzare
+                       if (!saved || prodotti.length === 0) {
+                           prodotti = prodottiGitHub;
+                           salvaStorage();
+                       }
+                   }
+               }
+           } catch (e) {
+               console.log("Modalità offline, uso i dati locali.");
+           }
+
+           // Se ancora vuoto per qualche motivo, fallback
+           if (!Array.isArray(prodotti) || prodotti.length === 0) {
+               prodotti = [];
+           }
+
+           renderProducts();
        }
 
        function toggleForm() {
@@ -614,19 +372,19 @@ ZEBRA (192 PZ),71855,,`;
                return;
            }
 
-           let csvContent = "data:text/csv;charset=utf-8,Nome Prodotto;Codice Produttore;Scaffale;Ripiano\n";
+           let csvContent = "data:text/csv;charset=utf-8,DESCRIZIONE,CODICE,SCAFFALE,RIPIANO\n";
            prodotti.forEach(p => {
                const nomeEscaped = `"${p.nome.replace(/"/g, '""')}"`;
                const codiceEscaped = `"${(p.codice || '').replace(/"/g, '""')}"`;
                const scaffaleEscaped = `"${(p.scaffale || '').replace(/"/g, '""')}"`;
                const ripianoEscaped = `"${(p.ripiano || '').replace(/"/g, '""')}"`;
-               csvContent += `${nomeEscaped};${codiceEscaped};${scaffaleEscaped};${ripianoEscaped}\n`;
+               csvContent += `${nomeEscaped},${codiceEscaped},${scaffaleEscaped},${ripianoEscaped}\n`;
            });
 
            const encodedUri = encodeURI(csvContent);
            const link = document.createElement("a");
            link.setAttribute("href", encodedUri);
-           link.setAttribute("download", `backup_prodotti_${new Date().toISOString().slice(0,10)}.csv`);
+           link.setAttribute("download", `prodotti_${new Date().toISOString().slice(0,10)}.csv`);
            document.body.appendChild(link);
            link.click();
            document.body.removeChild(link);
@@ -747,7 +505,9 @@ ZEBRA (192 PZ),71855,,`;
        }
 
        searchInput.addEventListener('input', (e) => renderProducts(e.target.value));
-       renderProducts();
+       
+       // Avvia l'app caricando il file CSV da GitHub
+       inizializzaApp();
    </script>
 </body>
 </html>
