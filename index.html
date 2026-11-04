@@ -76,19 +76,17 @@
        }
        .form-grid .full-width { grid-column: span 2; }
 
-       /* Campi di input del modulo ben dimensionati e comodi */
-       .form-card input {
+       .form-card input, .edit-panel input {
            width: 100%;
-           padding: 14px 16px;
-           font-size: 1.05rem;
+           padding: 12px 14px;
+           font-size: 1rem;
            border: 1px solid var(--border);
            border-radius: 10px;
            outline: none;
            background-color: #fff;
        }
-       .form-card input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+       .form-card input:focus, .edit-panel input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
 
-       /* Search Box con pulsante Clear (X) */
        .search-box {
            background: var(--card-bg);
            padding: 10px 14px;
@@ -186,8 +184,8 @@
 
        .edit-panel {
            background: #f8fafc;
-           padding: 10px;
-           border-radius: 8px;
+           padding: 12px;
+           border-radius: 10px;
            border: 1px dashed var(--border);
            display: none;
        }
@@ -224,8 +222,8 @@
            <div class="form-grid">
                <input type="text" id="nome" placeholder="Nome Prodotto (Col. A)" class="full-width" required>
                <input type="text" id="codice" placeholder="Codice Produttore (Col. B)">
-               <input type="text" id="scaffale" placeholder="Scaffale (Col. C)" required>
-               <input type="text" id="ripiano" placeholder="Ripiano (Col. D)" required>
+               <input type="text" id="scaffale" placeholder="Scaffale (Col. C)">
+               <input type="text" id="ripiano" placeholder="Ripiano (Col. D)">
            </div>
            <div style="display: flex; gap: 10px; margin-top: 8px;">
                <button type="submit" class="btn btn-success" style="padding: 12px; font-size: 0.95rem;">Salva Prodotto</button>
@@ -518,7 +516,6 @@ ZEBRA (192 PZ),71855,,`;
            prodotti = [];
        }
 
-       // Se la memoria è vuota o ha meno di 10 elementi, ricarica in automatico il CSV da 254 prodotti
        if (!Array.isArray(prodotti) || prodotti.length < 10) {
            prodotti = parseCSVText(CSV_INIZIALE);
            salvaStorage();
@@ -569,17 +566,21 @@ ZEBRA (192 PZ),71855,,`;
            if (panel) panel.classList.toggle('active');
        }
 
-       function salvaModificaPosizione(id) {
+       function salvaModificaProdotto(id) {
+           const nuovoNome = document.getElementById(`edit-nome-${id}`).value.trim().toUpperCase();
+           const nuovoCodice = document.getElementById(`edit-codice-${id}`).value.trim();
            const nuovoScaffale = document.getElementById(`edit-scaffale-${id}`).value.trim();
            const nuovoRipiano = document.getElementById(`edit-ripiano-${id}`).value.trim();
 
-           if (!nuovoScaffale || !nuovoRipiano) {
-               alert('Compila sia lo scaffale che il ripiano.');
+           if (!nuovoNome) {
+               alert('Il nome del prodotto non può essere vuoto.');
                return;
            }
 
            const prodotto = prodotti.find(p => p.id === id);
            if (prodotto) {
+               prodotto.nome = nuovoNome;
+               prodotto.codice = nuovoCodice;
                prodotto.scaffale = nuovoScaffale;
                prodotto.ripiano = nuovoRipiano;
                salvaStorage();
@@ -722,19 +723,23 @@ ZEBRA (192 PZ),71855,,`;
                                <span>Posizione</span>
                                ${p.scaffale || '-'} - ${p.ripiano || '-'}
                            </div>
-                           <button class="btn-icon" onclick="toggleEditPanel(${p.id})" title="Modifica Posizione">✏️</button>
+                           <button class="btn-icon" onclick="toggleEditPanel(${p.id})" title="Modifica Prodotto e Posizione">✏️</button>
                            <button class="btn-icon delete" onclick="eliminaProdotto(${p.id}, '${p.nome.replace(/'/g, "\\'")}')" title="Elimina singolo prodotto">🗑️</button>
                        </div>
                    </div>
                    <div class="edit-panel" id="edit-panel-${p.id}">
-                       <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 6px;">Modifica Posizione:</div>
-                       <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-                           <input type="text" id="edit-scaffale-${p.id}" value="${p.scaffale}" placeholder="Nuovo Scaffale">
-                           <input type="text" id="edit-ripiano-${p.id}" value="${p.ripiano}" placeholder="Nuovo Ripiano">
+                       <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; color: var(--primary);">Modifica Prodotto:</div>
+                       <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+                           <input type="text" id="edit-nome-${p.id}" value="${p.nome}" placeholder="Nome Prodotto">
+                           <input type="text" id="edit-codice-${p.id}" value="${p.codice}" placeholder="Codice Produttore">
+                           <div style="display: flex; gap: 8px;">
+                               <input type="text" id="edit-scaffale-${p.id}" value="${p.scaffale}" placeholder="Scaffale">
+                               <input type="text" id="edit-ripiano-${p.id}" value="${p.ripiano}" placeholder="Ripiano">
+                           </div>
                        </div>
                        <div style="display: flex; gap: 6px;">
-                           <button class="btn btn-success" style="padding: 6px 10px; font-size: 0.8rem;" onclick="salvaModificaPosizione(${p.id})">Conferma Modifica</button>
-                           <button class="btn btn-outline" style="padding: 6px 10px; font-size: 0.8rem;" onclick="toggleEditPanel(${p.id})">Annulla</button>
+                           <button class="btn btn-success" style="padding: 8px 12px; font-size: 0.85rem;" onclick="salvaModificaProdotto(${p.id})">Conferma Modifiche</button>
+                           <button class="btn btn-outline" style="padding: 8px 12px; font-size: 0.85rem;" onclick="toggleEditPanel(${p.id})">Annulla</button>
                        </div>
                    </div>
                </div>
